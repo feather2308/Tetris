@@ -1,4 +1,4 @@
-package Tetris;
+package tetris;
 
 public class TetrisData {
 	public static final int ROW = 20, COL = 10;
@@ -48,6 +48,14 @@ public class TetrisData {
 				}
 			}
 		MyTetris.getLblScoreLabel().setText("Score: " + getLine() * 175 * MyTetris.tetrisCanvas.level);
+		MyTetris.getLblLineLabel().setText("Line: " + getLine());
+		if(MyTetris.tetrisCanvas.lineTmp != line) {
+			switch(line / 10) {
+				default:
+					MyTetris.tetrisCanvas.level = line / 10 + 2;
+					break;
+			}
+		}
 	}
 	
 	public void clear() {

@@ -1,4 +1,4 @@
-package Tetris;
+package tetris;
 
 import java.awt.*;
 import javax.swing.*;
@@ -16,6 +16,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected Piece save;
 	protected int interval = 2000;
 	protected int level = 2;
+	protected int lineTmp;
 	protected String scoreStr = "Score: 0";
 	
 	public TetrisCanvas() {
@@ -34,6 +35,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	
 	public void start() {
 		data.clear();
+		lineTmp = data.getLine();
 		pieceMake();
 		worker = new Thread(this);
 		worker.start();
@@ -103,6 +105,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					current = next;
 					pieceMake();
 					makeNew = false;
+					lineTmp = data.getLine();
 				} else {
 					if(current.moveDown()) {
 						makeNew = true;
@@ -111,7 +114,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						data.removeLiness();
 					}
 					try {
-					Thread.sleep(interval/level);
+						Thread.sleep(interval/level);
 					} catch(Exception e) { }
 				}
 				repaint();

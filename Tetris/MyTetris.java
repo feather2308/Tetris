@@ -1,4 +1,4 @@
-package Tetris;
+package tetris;
 
 import java.awt.EventQueue;
 
@@ -14,13 +14,19 @@ import java.awt.event.ActionEvent;
 import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 
 public class MyTetris extends JFrame {
 
 	private JPanel contentPane;
 	public static TetrisCanvas tetrisCanvas;
 	private static JLabel lblScoreLabel;
+	private static JLabel lblLineLabel;
 	private static JMenuItem mntmNewMenuItem;
+	private JLabel lblNewLabel;
+	private JLabel lblNewLabel_1;
 
 	/**
 	 * Launch the application.
@@ -76,14 +82,28 @@ public class MyTetris extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		tetrisCanvas = new TetrisCanvas();
-		FlowLayout flowLayout = (FlowLayout) tetrisCanvas.getLayout();
-		flowLayout.setVgap(15);
-		flowLayout.setHgap(15);
-		flowLayout.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(tetrisCanvas, BorderLayout.CENTER);
+		tetrisCanvas.setLayout(null);
+		
+		lblNewLabel = new JLabel("-NEXT-");
+		lblNewLabel.setBounds(300, 15, 45, 15);
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		tetrisCanvas.add(lblNewLabel);
+		
+		lblNewLabel_1 = new JLabel("-SAVE-");
+		lblNewLabel_1.setBounds(300, 140, 44, 15);
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		tetrisCanvas.add(lblNewLabel_1);
 		
 		lblScoreLabel = new JLabel("Score");
+		lblScoreLabel.setBounds(270, 475, 95, 15);
+		lblScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		tetrisCanvas.add(lblScoreLabel);
+		
+		lblLineLabel = new JLabel("Line");
+		lblLineLabel.setBounds(270, 495, 60, 15);
+		lblLineLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		tetrisCanvas.add(lblLineLabel);
 	}
 
 	public TetrisCanvas getTetrisCanvas() {
@@ -94,5 +114,8 @@ public class MyTetris extends JFrame {
 	}
 	public static JMenuItem getMntmNewMenuItem() {
 		return mntmNewMenuItem;
+	}
+	public static JLabel getLblLineLabel() {
+		return lblLineLabel;
 	}
 }
