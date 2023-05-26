@@ -1,4 +1,4 @@
-package tetris;
+package Tetris;
 
 import java.awt.Point;
 
@@ -137,8 +137,8 @@ public abstract class Piece {
 		int rc = roteType();
 		if(rc <= 1) return;
 		
-		int[] tempR = r.clone();
-		int[] tempC = c.clone();
+//		int[] tempR = r.clone();
+//		int[] tempC = c.clone();
 		if(rc == 2) {
 			rotate4();
 			rotate4();

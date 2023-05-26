@@ -1,9 +1,17 @@
-package tetris;
+package Tetris;
 
-public class TetrisData {
+//import java.io.IOException;
+//import java.io.ObjectInputStream;
+//import java.io.ObjectOutputStream;
+//import java.io.Serializable;
+
+public class TetrisData
+//	implements Serializable 
+	{
 	public static final int ROW = 20, COL = 10;
 	
-	private int data[][], line;
+	private int data[][];
+	private transient int line;
 	
 	public TetrisData() {
 		data = new int[ROW][COL];
@@ -47,12 +55,12 @@ public class TetrisData {
 					i++;
 				}
 			}
-		MyTetris.getLblScoreLabel().setText("Score: " + getLine() * 175 * MyTetris.tetrisCanvas.level);
+		MyTetris.getLblScoreLabel().setText("Score: " + getLine() * 175 * MyTetris.getTetrisCanvas().level);
 		MyTetris.getLblLineLabel().setText("Line: " + getLine());
-		if(MyTetris.tetrisCanvas.lineTmp != line) {
+		if(MyTetris.getTetrisCanvas().lineTmp != line) {
 			switch(line / 10) {
 				default:
-					MyTetris.tetrisCanvas.level = line / 10 + 2;
+					MyTetris.getTetrisCanvas().level = line / 10 + 2;
 					break;
 			}
 		}
@@ -75,4 +83,34 @@ public class TetrisData {
 			System.out.println();
 		}
 	}
+	
+	public int[][] getData() {
+		return data;
+	}
+	
+	public void setData(int[][] data) {
+		this.data = data;
+	}
+	
+//	private void writeObject(ObjectOutputStream oos) {
+//		try {
+//			oos.defaultWriteObject();
+//			oos.writeObject(this.data);
+//			oos.writeObject(this.line);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}	
+//	}
+//	
+//	private void readObject(ObjectInputStream oos) {
+//		try {
+//			oos.defaultReadObject();
+//			this.data = (int[][]) oos.readObject();
+//			this.line = (int) oos.readObject();
+//		} catch (IOException | ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}	
+//	}
 }

@@ -1,4 +1,4 @@
-package tetris;
+package Tetris;
 
 import java.awt.*;
 import javax.swing.*;
@@ -181,8 +181,12 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	public void keyReleased(KeyEvent e) { }
 	public void keyTyped(KeyEvent e) { }
 	
+	private int temp = 7;
+	
 	public void pieceMake() {
 		int random = (int)(Math.random() * Integer.MAX_VALUE) % 7;
+		if(temp == random) random = (int)(Math.random() * Integer.MAX_VALUE) % 7;
+		temp = random;
         switch(random) {
             case 0:
                 next = new Bar(data);
@@ -206,16 +210,15 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
                 next = new Kr(data);
                 break;
             default:
-                if(random % 2 == 0)
-                    next = new Tee(data);
-                else next = new El(data);
+                pieceMake();
+                break;
         }
 	}
 	
 	public void gameCheck() {
 		if(current.copy()) {
 			stop();
-			MyTetris.getMntmNewMenuItem().setEnabled(true);
+			if(MyTetris.canChange) MyTetris.getMntmNewMenuItem().setEnabled(true);
 			int score = data.getLine() * 175 * level;
 			JOptionPane.showMessageDialog(this, "게임끝\n점수: " + score);
 		}
