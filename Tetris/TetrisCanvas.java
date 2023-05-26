@@ -15,14 +15,13 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected Piece next;
 	protected Piece save;
 	protected int interval = 2000;
-	protected int level = 2;
+	protected int level = TetrisData.BASE_SPEED;
 	protected int lineTmp;
-	protected String scoreStr = "Score: 0";
 	
 	public TetrisCanvas() {
 		data = new TetrisData();
 		addKeyListener(this);
-		colors = new Color[8];
+		colors = new Color[9];
 		colors[0] = new Color(80, 80, 80);	//검은회색
 		colors[1] = new Color(255, 0, 0);	//빨간색
 		colors[2] = new Color(0, 255, 0);	//녹색
@@ -31,24 +30,30 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		colors[5] = new Color(255, 150, 0);	//황토색
 		colors[6] = new Color(210, 0, 240);	//보라색
 		colors[7] = new Color(40, 0, 240);	//파란색
+		colors[8] = new Color(238, 238, 238); //배경색
 	}
 	
 	public void start() {
 		data.clear();
 		lineTmp = data.getLine();
 		pieceMake();
-		worker = new Thread(this);
-		worker.start();
 		makeNew = true;
 		stop = false;
+		
+		worker = new Thread(this);
+		worker.start();
+
 		requestFocus();
 		MyTetris.getLblScoreLabel().setText("Score: 0");
+		MyTetris.getLblLineLabel().setText("Line: 0");
 		repaint();
 	}
 	
 	public void stop() {
 		stop = true;
 		current = null;
+		next = null;
+		save = null;
 	}
 	
 	public void paint(Graphics g) {
@@ -118,8 +123,9 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					} catch(Exception e) { }
 				}
 				repaint();
-			} catch(Exception e) { }
+			} catch(Exception e) {System.out.println(e);}
 		}
+		if(MyTetris.canChange) MyTetris.getMntmNewMenuItem().setEnabled(true);
 	}
 	
 	public void keyPressed(KeyEvent e) {
@@ -218,7 +224,6 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	public void gameCheck() {
 		if(current.copy()) {
 			stop();
-			if(MyTetris.canChange) MyTetris.getMntmNewMenuItem().setEnabled(true);
 			int score = data.getLine() * 175 * level;
 			JOptionPane.showMessageDialog(this, "게임끝\n점수: " + score);
 		}

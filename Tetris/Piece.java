@@ -8,19 +8,22 @@ public abstract class Piece {
 	protected TetrisData data;
 	protected Point center;
 	protected boolean save = true;
+	protected int type, roteType;
 	
-	public Piece(TetrisData data) {
+	public Piece(TetrisData data, int type, int roteType) {
 		r = new int[4];
 		c = new int[4];
 		this.data = data;
+		this.type = type;
+		this.roteType = roteType;
 		center = new Point(5,0);
 	}
 
-	public abstract int getType();
-	public abstract int roteType();
-	
 	public int getX() { return center.x; }
 	public int getY() { return center.y; }
+	public int getType() { return type; }
+	public void setType(int type) { this.type = type; }
+	public int roteType() { return roteType; }
 	
 	public boolean copy() {
 		boolean value = false;

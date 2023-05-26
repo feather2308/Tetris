@@ -10,11 +10,10 @@ public class MultiTetrisCanvas extends JPanel{
 	protected TetrisData data = new TetrisData();
 	protected int margin = 20;
 	protected boolean stop;
-	protected Piece current;
-	protected String scoreStr = "Score: 0";
+	protected Piece current = new Empty(this.data);
 	
 	public MultiTetrisCanvas() {
-		colors = new Color[8];
+		colors = new Color[9];
 		colors[0] = new Color(80, 80, 80);	//검은회색
 		colors[1] = new Color(255, 0, 0);	//빨간색
 		colors[2] = new Color(0, 255, 0);	//녹색
@@ -23,6 +22,7 @@ public class MultiTetrisCanvas extends JPanel{
 		colors[5] = new Color(255, 150, 0);	//황토색
 		colors[6] = new Color(210, 0, 240);	//보라색
 		colors[7] = new Color(40, 0, 240);	//파란색
+		colors[8] = new Color(238, 238, 238); //배경색
 		
 		data.clear();
 		repaint();
@@ -45,6 +45,7 @@ public class MultiTetrisCanvas extends JPanel{
 		
 		if(current != null) {
 			for(int i = 0; i < 4; i++) {
+				if(current.getType() == 8) break;
 				g.setColor(colors[current.getType()]);
 				g.fill3DRect(margin/2 + w * (current.getX() + current.c[i]), margin/2 + w * (current.getY() + current.r[i]), w, w, true);
 			}

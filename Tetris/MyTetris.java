@@ -1,10 +1,7 @@
 package Tetris;
 
 import java.awt.EventQueue;
-import java.awt.Graphics;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.*;
 
 import javax.swing.*;
@@ -34,6 +31,7 @@ public class MyTetris extends JFrame {
 	private JMenuItem smallMenuItem;
 
 	private final ConnectServer connectServer = new ConnectServer();
+	private final EnemyScore enemyScore = new EnemyScore();
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -126,6 +124,9 @@ public class MyTetris extends JFrame {
 		serverMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					smallMenuItem.setEnabled(false);
+					serverMenuItem.setEnabled(false);
+					clientMenuItem.setEnabled(false);
 					serverHandler sh = new serverHandler(30000);
 					sh.start();
 				} catch (Exception e1) { }
@@ -135,6 +136,9 @@ public class MyTetris extends JFrame {
 		clientMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					smallMenuItem.setEnabled(false);
+					serverMenuItem.setEnabled(false);
+					clientMenuItem.setEnabled(false);
 					connectServer.setVisible(true);
 				} catch (Exception e1) { }
 			}
@@ -153,6 +157,10 @@ public class MyTetris extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
+		renderCanvas();
+	}
+	
+	private void renderCanvas() {
 		tetrisCanvas = new TetrisCanvas();
 		contentPane.add(tetrisCanvas, BorderLayout.CENTER);
 		tetrisCanvas.setLayout(null);
@@ -206,6 +214,10 @@ public class MyTetris extends JFrame {
 		if(connect) {
 			clientHandler ch = new clientHandler(connectServer.ip, connectServer.port);
 			ch.start();
+		} else {
+			smallMenuItem.setEnabled(true);
+			serverMenuItem.setEnabled(true);
+			clientMenuItem.setEnabled(true);
 		}
 	}
 	
@@ -241,22 +253,7 @@ public class MyTetris extends JFrame {
 					
 					tetrisCanvas.start();
 					
-					int[][] data;
-					String receivedData;
-					
-					while(true) {
-						
-						data = tetrisCanvas.data.getData();
-						out.println(ArrayConverter.convertIntArrayToString(data));
-						out.flush();
-						
-						receivedData = in.readLine();
-						
-						if(receivedData != null) {
-							multiTetrisCanvas.data.setData(ArrayConverter.convertStringToIntArray(receivedData));
-							multiTetrisCanvas.repaint();
-						}
-					}
+					function.handlerRun(in, out, enemyScore);
 
 //					inObj = new ObjectInputStream(client.getInputStream());
 //					
@@ -294,7 +291,12 @@ public class MyTetris extends JFrame {
 		public clientHandler(String IP, int port) {
 			try {
 				socket = new Socket(IP, port);
-			} catch (Exception e) {System.out.println(e);}
+			} catch (Exception e) {
+				System.out.println(e);
+				smallMenuItem.setEnabled(true);
+				serverMenuItem.setEnabled(true);
+				clientMenuItem.setEnabled(true);
+			}
 		}
 		
 		public void run() {
@@ -313,21 +315,7 @@ public class MyTetris extends JFrame {
 				
 				tetrisCanvas.start();
 				
-				int[][] data;
-				String receivedData;
-				
-				while(true) {
-					data = tetrisCanvas.data.getData();
-					out.println(ArrayConverter.convertIntArrayToString(data));
-					out.flush();
-					
-					receivedData = in.readLine();
-					
-					if(receivedData != null) {
-						multiTetrisCanvas.data.setData(ArrayConverter.convertStringToIntArray(receivedData));
-						multiTetrisCanvas.repaint();
-					}
-				}
+				function.handlerRun(in, out, enemyScore);
 				
 //				outObj = new ObjectOutputStream(socket.getOutputStream());
 //				outObj.writeObject(null);
@@ -351,11 +339,132 @@ public class MyTetris extends JFrame {
 //					}
 //				}
 			} catch(Exception e) {System.out.println(e);}
+			renderUIMenuItem(true);
 		}
 	}
 	
-	class ArrayConverter {
-	    public static String convertIntArrayToString(int[][] array) {
+	private class function {
+		public static void handlerRun(BufferedReader in, PrintWriter out, EnemyScore enemyScore) throws IOException {
+			//output 변수들
+			int[][] data;
+			int[] r, c;
+			int death, score = 0, x, y, CPType;
+			
+			String outStr;
+			
+			//input 변수들
+			int inDeath = 0;
+			int[][] inData;
+			int[] inCPr, inCPc;
+
+			String inStr;
+			String[] inStrFix = {""};
+			
+			while(true) {
+				if(tetrisCanvas.stop) death = 1;
+				else death = 0;
+				score = tetrisCanvas.data.getLine() * 175 * tetrisCanvas.level;
+				data = tetrisCanvas.data.getData();
+				
+				if(tetrisCanvas.current != null) {
+					r = tetrisCanvas.current.r;
+					c = tetrisCanvas.current.c;
+					x = tetrisCanvas.current.center.x;
+					y = tetrisCanvas.current.center.y;
+					CPType = tetrisCanvas.current.getType();
+				}
+				else {
+					r = new int[] {0, 0, 0, 0};
+					c = new int[] {0, 0, 0, 0};
+					x = 0;
+					y = 0;
+					CPType = 8;
+				}
+				
+				outStr = death + "p"									//tetrisCanvas.stop					Boolean 자료형 -> convert int 자료형
+						+ score + "p"									//tetrisCanvas.data.getLine() * 175 * tetrisCanvas.level int 자료형
+						+ function.convertIntArrayToString(data) + "p"	//tetrisCanvas.data.getData()		int[][] 자료형 즉, data의 data임.
+						+ function.convertIntArrayToString_1(r) + "p"	//tetrisCanvas.current.r			int[] 자료형
+						+ function.convertIntArrayToString_1(c) + "p"	//tetrisCanvas.current.c			int[] 자료형
+						+ x + "p"										//tetrisCanvas.current.center.x		int 자료형
+						+ y + "p"										//tetrisCanvas.current.center.y		int 자료형
+						+ CPType;										//tetrisCanvas.current.getType()	int 자료형
+				
+				out.println(outStr);
+				out.flush();
+				
+				inStr = in.readLine();
+				
+				if(inStr != null) {
+					inStrFix = function.convertStringDiv(inStr); 	//inStrFix[0, 1, 2, 3, 4, 5, 6, 7]
+																	//0 = 죽음			1 = 점수				2 = data.data 테이블임.
+																	//3 = 현재조각 r[]		4 = 현재조각 c[]
+																	//5 = 현재조각 센터 x	6 = 현재조각 센터 y		7 = 현재조각 타입
+					inDeath = Integer.parseInt(inStrFix[0]);
+					inData = function.convertStringToIntArray(inStrFix[2]);
+					if(inData.length == TetrisData.ROW && inData[0].length == TetrisData.COL) {
+						multiTetrisCanvas.data.setData(function.convertStringToIntArray(inStrFix[2]));
+						multiTetrisCanvas.repaint();
+					}
+					inCPr = function.convertStringToIntArray_1(inStrFix[3]);
+					inCPc = function.convertStringToIntArray_1(inStrFix[4]);
+					if(inCPr.length == 4 && inCPc.length == 4) {
+						multiTetrisCanvas.current.r = inCPr;
+						multiTetrisCanvas.current.c = inCPc;
+						multiTetrisCanvas.current.center.x = Integer.parseInt(inStrFix[5]);
+						multiTetrisCanvas.current.center.y = Integer.parseInt(inStrFix[6]);
+						multiTetrisCanvas.current.setType(Integer.parseInt(inStrFix[7]));
+					}
+				}
+
+				if(inDeath == 1 && tetrisCanvas.stop) break;
+			}
+			
+			outStr = 1 + "p"
+					+ score + "p"
+					+ function.convertIntArrayToString(data) + "p"
+					+ function.convertIntArrayToString_1(r) + "p"
+					+ function.convertIntArrayToString_1(c) + "p"
+					+ 0 + "p"
+					+ 0 + "p"
+					+ 8;
+			
+			out.println(outStr);
+			out.flush();
+			
+			if(inStr != null) {
+				inStrFix = function.convertStringDiv(inStr);
+				
+				inDeath = Integer.parseInt(inStrFix[0]);
+				inData = function.convertStringToIntArray(inStrFix[2]);
+				if(inData.length == TetrisData.ROW && inData[0].length == TetrisData.COL) {
+					multiTetrisCanvas.data.setData(function.convertStringToIntArray(inStrFix[2]));
+					multiTetrisCanvas.repaint();
+				}
+				inCPr = function.convertStringToIntArray_1(inStrFix[3]);
+				inCPc = function.convertStringToIntArray_1(inStrFix[4]);
+				if(inCPr.length == 4 && inCPc.length == 4) {
+					multiTetrisCanvas.current.r = inCPr;
+					multiTetrisCanvas.current.c = inCPc;
+					multiTetrisCanvas.current.center.x = Integer.parseInt(inStrFix[5]);
+					multiTetrisCanvas.current.center.y = Integer.parseInt(inStrFix[6]);
+					multiTetrisCanvas.current.setType(Integer.parseInt(inStrFix[7]));
+				}
+			}
+			
+			enemyScore.getMeLabel().setText("Me");
+			enemyScore.getMeScoreLabel().setText(score+"");
+			enemyScore.getEnemyLabel().setText("Foe");
+			enemyScore.getEnemyScoreLabel().setText(inStrFix[1]);
+			String win;
+			if(score > Integer.parseInt(inStrFix[1])) win = "<< Win";
+			else if(score < Integer.parseInt(inStrFix[1])) win = "Win >>";
+			else win = "Draw";
+			enemyScore.getWinLabel().setText(win);
+			enemyScore.setVisible(true);
+		}
+		
+		public static String convertIntArrayToString(int[][] array) {
 	        StringBuilder sb = new StringBuilder();
 	        
 	        for (int[] row : array) {
@@ -378,6 +487,30 @@ public class MyTetris extends JFrame {
 	            }
 	        }
 	        return array;
+	    }
+	    
+	    public static String convertIntArrayToString_1 (int[] array) {
+	    	StringBuilder sb = new StringBuilder();
+	    	
+	    	for(int num : array) {
+	    		sb.append(num).append("s");
+	    	}
+	    	return sb.toString();
+	    }
+	    
+	    public static int[] convertStringToIntArray_1(String str) {
+	    	String[] num = str.trim().split("s");
+	    	int[] array = new int[4];
+	    	
+	    	for(int i = 0; i < 4; i++) {
+	    		array[i] = Integer.parseInt(num[i]);
+	    	}
+	    	return array;
+	    }
+	    
+	    public static String[] convertStringDiv(String str) {
+	    	String[] reStr = str.trim().split("p");
+	    	return reStr;
 	    }
 	}
 }

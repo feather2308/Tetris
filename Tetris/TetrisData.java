@@ -8,7 +8,10 @@ package Tetris;
 public class TetrisData
 //	implements Serializable 
 	{
-	public static final int ROW = 20, COL = 10;
+	public static final int ROW = 20,
+							COL = 10,
+							MAX_SPEED = 30,
+							BASE_SPEED = 2;
 	
 	private int data[][];
 	private transient int line;
@@ -58,10 +61,10 @@ public class TetrisData
 		MyTetris.getLblScoreLabel().setText("Score: " + getLine() * 175 * MyTetris.getTetrisCanvas().level);
 		MyTetris.getLblLineLabel().setText("Line: " + getLine());
 		if(MyTetris.getTetrisCanvas().lineTmp != line) {
-			switch(line / 10) {
-				default:
-					MyTetris.getTetrisCanvas().level = line / 10 + 2;
-					break;
+			if((line / 10 + BASE_SPEED) >= MAX_SPEED) {
+				MyTetris.getTetrisCanvas().level = MAX_SPEED;
+			} else {
+				MyTetris.getTetrisCanvas().level = line / 10 + BASE_SPEED;
 			}
 		}
 	}
