@@ -46,6 +46,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		requestFocus();
 		MyTetris.getLblScoreLabel().setText("Score: 0");
 		MyTetris.getLblLineLabel().setText("Line: 0");
+		MyTetris.getLblLevelLabel().setText("Level: 1");
 		repaint();
 	}
 	
@@ -180,7 +181,9 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						current.save = false;
 						current.resetPosition();
 					}
+					worker.interrupt();
 				}
+				break;
 		}
 	}
 	
@@ -225,7 +228,10 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		if(current.copy()) {
 			stop();
 			int score = data.getLine() * 175 * level;
-			JOptionPane.showMessageDialog(this, "게임끝\n점수: " + score);
+//			JOptionPane.showMessageDialog(this, "게임끝\n점수: " + score);
+			MyTetris.getGameOver().getScoreLabel().setText("점수: " + score);
+			MyTetris.getGameOver().getRecordScore().getScoreField().setText(score + "");
+			MyTetris.getGameOver().setVisible(true);
 		}
 	}
 }

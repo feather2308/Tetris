@@ -10,8 +10,10 @@ public class TetrisData
 	{
 	public static final int ROW = 20,
 							COL = 10,
-							MAX_SPEED = 30,
+							MAX_SPEED = 31,
 							BASE_SPEED = 2;
+
+	public static int SPEED = BASE_SPEED;
 	
 	private int data[][];
 	private transient int line;
@@ -62,15 +64,19 @@ public class TetrisData
 		MyTetris.getLblLineLabel().setText("Line: " + getLine());
 		if(MyTetris.getTetrisCanvas().lineTmp != line) {
 			if((line / 10 + BASE_SPEED) >= MAX_SPEED) {
+				SPEED = MAX_SPEED - 1;
 				MyTetris.getTetrisCanvas().level = MAX_SPEED;
 			} else {
+				SPEED = line / 10 + BASE_SPEED - 1;
 				MyTetris.getTetrisCanvas().level = line / 10 + BASE_SPEED;
 			}
+			MyTetris.getLblLevelLabel().setText("Level: " + SPEED);
 		}
 	}
 	
 	public void clear() {
 		line = 0;
+		MyTetris.getTetrisCanvas().level = BASE_SPEED;
 		for(int i = 0; i < ROW; i++) {
 			for(int k = 0; k < COL; k++) {
 				data[i][k] = 0;

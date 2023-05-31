@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class MyTetris extends JFrame {
 
@@ -17,12 +18,14 @@ public class MyTetris extends JFrame {
 	private static MultiTetrisCanvas multiTetrisCanvas;
 	private static JLabel lblScoreLabel;
 	private static JLabel lblLineLabel;
+	private static JLabel lblLevelLabel;
 	
 	private JLabel nextPieceLabel;
 	private JLabel savePieceLabel;
 	
 	private static JMenuItem mntmStartMenuItem;
 	protected static boolean connect = false;
+	protected static boolean serverOpen = false;
 	protected static boolean canChange = true;
 	
 	private JMenuItem largeMenuItem;
@@ -30,9 +33,12 @@ public class MyTetris extends JFrame {
 	private JMenuItem clientMenuItem;
 	private JMenuItem smallMenuItem;
 
+	private final OpenServer openServer = new OpenServer();
 	private final ConnectServer connectServer = new ConnectServer();
 	private final EnemyScore enemyScore = new EnemyScore();
-
+	private static final LeaderBoard leaderBoard = new LeaderBoard();
+	private static final GameOver gameOver = new GameOver();
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -59,8 +65,17 @@ public class MyTetris extends JFrame {
 	public static JLabel getLblLineLabel() {
 		return lblLineLabel;
 	}
+	public static JLabel getLblLevelLabel() {
+		return lblLevelLabel;
+	}
 	public static JMenuItem getMntmNewMenuItem() {
 		return mntmStartMenuItem;
+	}
+	public static LeaderBoard getLeaderBoard() {
+		return leaderBoard;
+	}
+	public static GameOver getGameOver() {
+		return gameOver;
 	}
 	
 	private void renderUI() {
@@ -92,8 +107,39 @@ public class MyTetris extends JFrame {
 		});
 		gameMenu.add(mntmExitMenuItem);
 		
+		JMenu mnNewMenu = new JMenu("LeaderBoard");
+		menuBar.add(mnNewMenu);
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("LeaderBoard");
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				function.refreshLeaderBoard();
+			}
+		});
+		mnNewMenu.add(mntmNewMenuItem);
+		
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("LeaderBoardReset");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					function.makeLeaderBoard();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		mnNewMenu.add(mntmNewMenuItem_1);
+		
 		JMenu extraMenu = new JMenu("Extra");
 		menuBar.add(extraMenu);
+		
+		openServer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		openServer.addWindowListener(new WindowAdapter() {
+			public void windowClosed(WindowEvent e) {
+				doOpen();
+			}
+		});
 		
 		connectServer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		connectServer.addWindowListener(new WindowAdapter() {
@@ -127,8 +173,7 @@ public class MyTetris extends JFrame {
 					smallMenuItem.setEnabled(false);
 					serverMenuItem.setEnabled(false);
 					clientMenuItem.setEnabled(false);
-					serverHandler sh = new serverHandler(30000);
-					sh.start();
+					openServer.setVisible(true);
 				} catch (Exception e1) { }
 			}
 		});
@@ -176,14 +221,19 @@ public class MyTetris extends JFrame {
 		tetrisCanvas.add(savePieceLabel);
 		
 		lblScoreLabel = new JLabel("Score");
-		lblScoreLabel.setBounds(270, 475, 95, 15);
+		lblScoreLabel.setBounds(270, 455, 95, 15);
 		lblScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		tetrisCanvas.add(lblScoreLabel);
 		
 		lblLineLabel = new JLabel("Line");
-		lblLineLabel.setBounds(270, 495, 60, 15);
+		lblLineLabel.setBounds(270, 475, 60, 15);
 		lblLineLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		tetrisCanvas.add(lblLineLabel);
+		
+		lblLevelLabel = new JLabel("Level");
+		lblLevelLabel.setBounds(270, 495, 60, 15);
+		lblLevelLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		tetrisCanvas.add(lblLevelLabel);
 	}
 	
 	private void renderUISingle() {//확장 이후에 다시 축소할 때 사용
@@ -208,6 +258,17 @@ public class MyTetris extends JFrame {
 		serverMenuItem.setEnabled(b);
 		mntmStartMenuItem.setEnabled(!b);
 		canChange = !b;
+	}
+	
+	public void doOpen() {
+		if(serverOpen) {
+			serverHandler sh = new serverHandler(openServer.port);
+			sh.start();
+		} else {
+			smallMenuItem.setEnabled(true);
+			serverMenuItem.setEnabled(true);
+			clientMenuItem.setEnabled(true);
+		}
 	}
 	
 	public void doConnect() {
@@ -343,7 +404,7 @@ public class MyTetris extends JFrame {
 		}
 	}
 	
-	private class function {
+	public class function {
 		public static void handlerRun(BufferedReader in, PrintWriter out, EnemyScore enemyScore) throws IOException {
 			//output 변수들
 			int[][] data;
@@ -511,6 +572,114 @@ public class MyTetris extends JFrame {
 	    public static String[] convertStringDiv(String str) {
 	    	String[] reStr = str.trim().split("p");
 	    	return reStr;
+	    }
+	    
+	    public static String readLeaderBoard() {
+	    	String str = "";
+	    	try {
+		    	File file = new File(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+		    	
+		    	FileReader file_reader = new FileReader(file);
+		    	int cur = 0;
+		    	while((cur = file_reader.read()) != -1) {
+		    		str = str + (char)cur;
+		    	}
+		    	file_reader.close();
+	    	} catch(Exception e) {
+	    		try {
+					str = makeLeaderBoard();
+				} catch (Exception e1) {
+					System.out.println(e);
+					System.out.println(e1);
+					return "-1";
+				}
+			}
+	    	return str;
+	    }
+	    
+	    public static void saveLeaderBoard(String str) {
+	    	try {
+				OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+				byte[] by = str.getBytes();
+				output.write(by);
+				output.close();
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+	    }
+	    
+	    public static String makeLeaderBoard() throws Exception {
+	    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+	    	String str = "10000, AAA"
+	    			+ ", 9000, BBB"
+	    			+ ", 8000, CCC"
+	    			+ ", 7000, DDD"
+	    			+ ", 6000, EEE"
+	    			+ ", 5000, FFF"
+	    			+ ", 4000, GGG"
+	    			+ ", 3000, HHH"
+	    			+ ", 2000, III"
+	    			+ ", 1000, JJJ";
+			byte[] by = str.getBytes();
+			output.write(by);
+			output.close();
+			return str;
+	    }
+	    
+	    public static void refreshLeaderBoard() {
+	    	int i;
+	    	String leaderBoardRawData = readLeaderBoard();
+	    	
+			String[] leaderBRFix = leaderBoardRawData.split(",\\s*");
+
+			String[] strScorelist = new String[leaderBRFix.length / 2];
+			String[] strNamelist = new String[leaderBRFix.length / 2];
+			for (i = 0; i < leaderBRFix.length; i += 2) {
+			    strScorelist[i / 2] = leaderBRFix[i].replaceAll("\\s+", "");
+			    strNamelist[i / 2] = leaderBRFix[i + 1].replaceAll("\\s+", "");
+			}
+
+			i = 0;
+			for (String score : strScorelist) {
+				getLeaderBoard().getScoreLabel()[i].setText(score);
+				i++;
+			}
+			
+			i = 0;
+			for (String name : strNamelist) {
+				getLeaderBoard().getNameLabel()[i].setText(name);
+				i++;
+			}
+			getLeaderBoard().setVisible(true);
+	    }
+	    
+	    public static void recordLeaderBoard(int score, String name) throws Exception {
+	    	String leaderBoardRawData = readLeaderBoard();
+	    	
+	    	String[] rawData = leaderBoardRawData.split(", ");
+	        List<String> leaderBoardList = new ArrayList<>(Arrays.asList(rawData));
+	    	
+	    	for (int i = 0; i < leaderBoardList.size(); i += 2) {
+	            int currentScore = Integer.parseInt(leaderBoardList.get(i));
+	            if (score > currentScore) {
+	                leaderBoardList.add(i, name);
+	                leaderBoardList.add(i, String.valueOf(score));
+	                leaderBoardList.remove(20);
+	                leaderBoardList.remove(20);
+	                break;
+	            }
+	        }
+	    	
+	        StringBuilder newLeaderBoard = new StringBuilder();
+	        for (String item : leaderBoardList) {
+	            newLeaderBoard.append(item).append(", ");
+	        }
+	        newLeaderBoard.setLength(newLeaderBoard.length() - 2);
+
+	    	OutputStream output = new FileOutputStream(System.getProperty("java.io.tmpdir") + "/tlb.cTeam");
+			byte[] by = newLeaderBoard.toString().getBytes();
+			output.write(by);
+			output.close();
 	    }
 	}
 }
