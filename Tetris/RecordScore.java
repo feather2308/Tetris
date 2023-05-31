@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.BoxLayout;
 import java.awt.GridLayout;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
