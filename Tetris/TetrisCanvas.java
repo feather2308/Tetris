@@ -14,6 +14,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected Piece current;
 	protected Piece next;
 	protected Piece save;
+	protected Piece miri;
 	protected int interval = 2000;
 	protected int level = TetrisData.BASE_SPEED;
 	protected int lineTmp;
@@ -53,6 +54,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	public void stop() {
 		stop = true;
 		current = null;
+		miri = null;
 		next = null;
 		save = null;
 	}
@@ -72,13 +74,21 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 			}
 		}
 		
+		if(miri != null) {
+			while(miri.moveDown() != true) { }
+			for(int i = 0; i < 4; i++) {
+				g.setColor(colors[0]);
+				g.fill3DRect(margin/2 + w * (miri.getX() + miri.c[i]), margin/2 + w * (miri.getY() + miri.r[i]), w, w, true);
+			}
+		}
+		
 		if(current != null) {
 			for(int i = 0; i < 4; i++) {
 				g.setColor(colors[current.getType()]);
 				g.fill3DRect(margin/2 + w * (current.getX() + current.c[i]), margin/2 + w * (current.getY() + current.r[i]), w, w, true);
 			}
 		}
-		
+
 	    if(next != null) {
 	    	int nextX = TetrisData.COL + 2; // 오른쪽에 위치할 x 좌표
             int nextY = 2; // 위쪽에 위치할 y 좌표
@@ -109,6 +119,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 			try {
 				if(makeNew) {
 					current = next;
+					miri = current.deepCopy();
 					pieceMake();
 					makeNew = false;
 					lineTmp = data.getLine();
@@ -117,6 +128,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						makeNew = true;
 						gameCheck();
 						current = null;
+						miri = null;
 						data.removeLiness();
 					}
 					try {
@@ -135,16 +147,19 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		switch(e.getKeyCode()) {
 			case 37:	//왼쪽 화살표
 				current.moveLeft();
+				miri = current.deepCopy();
 				repaint();
 				break;  
 			case 39:	//오른쪽 화살표
 				current.moveRight();
+				miri = current.deepCopy();
 				repaint();
 				break;
 			case 38:	//윗쪽 화살표
 			case 90:	//'z' 키
 				if(!current.isOverlap(0)) {
 					current.rotate();
+					miri = current.deepCopy();
 				}
 				repaint();
 				break;
@@ -153,6 +168,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					makeNew = true;
 					gameCheck();
 					current = null;
+					miri = null;
 					data.removeLiness();
 					worker.interrupt();
 				}
@@ -163,6 +179,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				makeNew = true;
 				gameCheck();
 				current = null;
+				miri = null;
 				data.removeLiness();
 				repaint();
 				worker.interrupt();
@@ -172,6 +189,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					if(save == null) {
 						save = current;
 						current = next;
+						miri = current.deepCopy();
 						pieceMake();
 						current.save = false;
 					} else {
@@ -180,6 +198,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 						current = temp;
 						current.save = false;
 						current.resetPosition();
+						miri = current.deepCopy();
 					}
 					worker.interrupt();
 				}

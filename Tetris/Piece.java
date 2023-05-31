@@ -2,13 +2,26 @@ package Tetris;
 
 import java.awt.Point;
 
-public abstract class Piece {
+public abstract class Piece implements Cloneable {
 	final int DOWN = 0, LEFT = 1, RIGHT = 2;
 	protected int r[], c[];
 	protected TetrisData data;
 	protected Point center;
 	protected boolean save = true;
 	protected int type, roteType;
+	
+	public Piece deepCopy() {
+		Piece copy = null;
+		try {
+	        copy = (Piece) super.clone();
+	        copy.r = r.clone();
+	        copy.c = c.clone();
+	        copy.center = new Point(center);
+	    } catch (CloneNotSupportedException e) {
+	        e.printStackTrace();
+	    }
+	    return copy;
+	}
 	
 	public Piece(TetrisData data, int type, int roteType) {
 		r = new int[4];
