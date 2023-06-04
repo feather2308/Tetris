@@ -16,7 +16,12 @@ public class TetrisData
 	public static int SPEED = BASE_SPEED;
 	
 	private int data[][];
-	private transient int line;
+	private
+//	transient
+	int line = 0;
+	private int score = 0;
+	
+	private boolean isAttack = false;
 	
 	public TetrisData() {
 		data = new int[ROW][COL];
@@ -35,6 +40,14 @@ public class TetrisData
 		return line;
 	}
 	
+	public int getScore() {
+		return score;
+	}
+	
+	public void setScore(int num) {
+		score += num;
+	}
+	
 	public synchronized void removeLiness() {
 		NEXT:
 			for(int i = ROW - 1; i >= 0; i--) {
@@ -47,6 +60,7 @@ public class TetrisData
 				}
 				if(done) {
 					line++;
+					score += 175 * MyTetris.getTetrisCanvas().level;
 					for(int x = i; x > 0; x--) {
 						for(int y = 0; y < COL; y++) {
 							data[x][y] = data[x-1][y];
@@ -60,8 +74,8 @@ public class TetrisData
 					i++;
 				}
 			}
-		MyTetris.getLblScoreLabel().setText("Score: " + getLine() * 175 * MyTetris.getTetrisCanvas().level);
-		MyTetris.getLblLineLabel().setText("Line: " + getLine());
+		MyTetris.getLblScoreLabel().setText("Score: " + score);
+		MyTetris.getLblLineLabel().setText("Line: " + line);
 		if(MyTetris.getTetrisCanvas().lineTmp != line) {
 			if((line / 10 + BASE_SPEED) >= MAX_SPEED) {
 				SPEED = MAX_SPEED - 1;
@@ -75,7 +89,7 @@ public class TetrisData
 	}
 	
 	public synchronized void attackLiness() throws Exception {
-		System.out.println("gjr");
+		if(isAttack)
 		while(MyTetris.getTetrisCanvas().aLine > 0) {
 			for(int i = 1; i < ROW; i++) {
 				for(int k = 0; k < COL; k++) {
@@ -88,8 +102,18 @@ public class TetrisData
 		}
 	}
 	
+	public synchronized void itemRemoveLine() {
+		for(int i = ROW - 1; i >= 0; i--) {
+			for(int k = 0; k < COL; k++) {
+				if(i != 0) data[i][k] = data[i-1][k];
+				else data[0][k] = 0;
+			}
+		}
+	}
+	
 	public void clear() {
 		line = 0;
+		score = 0;
 		MyTetris.getTetrisCanvas().level = BASE_SPEED;
 		for(int i = 0; i < ROW; i++) {
 			for(int k = 0; k < COL; k++) {
@@ -109,6 +133,10 @@ public class TetrisData
 	
 	public int[][] getData() {
 		return data;
+	}
+	
+	public void setAttack(boolean attack) {
+		isAttack = attack;
 	}
 	
 	public void setData(int[][] data) {

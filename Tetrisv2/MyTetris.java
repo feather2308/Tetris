@@ -17,7 +17,7 @@ import java.net.*;
 import java.util.*;
 
 public class MyTetris extends JFrame {	
-	final static char gjr = '헉', huk = '헉';
+	final static char gjr = '헉', huk = '헉', 헉 = '헉';
 	
 	private static TetrisCanvas tetrisCanvas;
 	private static MultiTetrisCanvas multiTetrisCanvas;
@@ -639,6 +639,8 @@ public class MyTetris extends JFrame {
 					out.println(outStr);
 					System.out.println(in.read());
 					
+					MyTetris.tetrisCanvas.data.setAttack(MyTetris.getAttackCheckBox().isSelected());
+					
 					try {function.handlerRun(in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
 				}
 			} catch (Exception e) {
@@ -703,6 +705,8 @@ public class MyTetris extends JFrame {
 				out.write(1);
 				System.out.println(in.readLine());
 				
+				MyTetris.tetrisCanvas.data.setAttack(Integer.parseInt(inStrFix[1]) == 1 ? true : false);
+				
 				try {function.handlerRun(in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
 			} catch(Exception e) {
 				JOptionPane.showMessageDialog(null, e);
@@ -742,7 +746,7 @@ public class MyTetris extends JFrame {
 			while(true) {
 				if(tetrisCanvas.stop) death = 1;
 				else death = 0;
-				score = tetrisCanvas.data.getLine() * 175 * tetrisCanvas.level;
+				score = tetrisCanvas.data.getScore();
 				data = tetrisCanvas.data.getData();
 				outLine = tetrisCanvas.data.getLine();
 				
@@ -762,7 +766,7 @@ public class MyTetris extends JFrame {
 				}
 				
 				outStr = death + "p"									//tetrisCanvas.stop					Boolean 자료형 -> convert int 자료형
-						+ score + "p"									//tetrisCanvas.data.getLine() * 175 * tetrisCanvas.level int 자료형
+						+ score + "p"									//tetrisCanvas.data.getScore()		int 자료형
 						+ function.convertIntArrayToString(data) + "p"	//tetrisCanvas.data.getData()		int[][] 자료형 즉, data의 data임.
 						+ function.convertIntArrayToString_1(r) + "p"	//tetrisCanvas.current.r			int[] 자료형
 						+ function.convertIntArrayToString_1(c) + "p"	//tetrisCanvas.current.c			int[] 자료형

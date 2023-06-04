@@ -46,8 +46,8 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		worker.start();
 
 		requestFocus();
-		MyTetris.getLblScoreLabel().setText("Score: 0");
-		MyTetris.getLblLineLabel().setText("Line: 0");
+		MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+		MyTetris.getLblLineLabel().setText("Line: " + data.getLine());
 		MyTetris.getLblLevelLabel().setText("Level: 1");
 		repaint();
 	}
@@ -236,6 +236,15 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					worker.interrupt();
 				}
 				break;
+			case 65:	//'a' 키
+				if(data.getScore()>=5000) {
+					data.itemRemoveLine();
+					data.setScore(-5000);
+					MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+					repaint();
+				}
+				
+			case 85:	//'s' 키
 		}
 	}
 	
@@ -294,10 +303,9 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	public void gameCheck(boolean downSetting) {
 		if(current.copy(downSetting)) {
 			stop();
-			int score = data.getLine() * 175 * level;
 //			JOptionPane.showMessageDialog(this, "게임끝\n점수: " + score);
-			MyTetris.getGameOver().getScoreLabel().setText("점수: " + score);
-			MyTetris.getGameOver().getRecordScore().getScoreField().setText(score + "");
+			MyTetris.getGameOver().getScoreLabel().setText("점수: " + data.getScore());
+			MyTetris.getGameOver().getRecordScore().getScoreField().setText(data.getScore() + "");
 			MyTetris.getGameOver().setVisible(true);
 		}
 	}
