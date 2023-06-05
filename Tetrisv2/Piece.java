@@ -228,7 +228,7 @@ public abstract class Piece implements Cloneable {
 
 	    for (int i = minX; i <= maxX; i++) {
 	        for (int j = minY; j <= maxY; j++) {
-	            if (!isOverlap(0)) {
+	            if (!isOverlap(3)) {
 	            	return;
 	            }
 	        }

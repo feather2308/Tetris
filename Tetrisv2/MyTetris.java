@@ -453,7 +453,12 @@ public class MyTetris extends JFrame {
 		txtTextfieldIsGood = new JTextField();
 		txtTextfieldIsGood.setHorizontalAlignment(SwingConstants.CENTER);
 		txtTextfieldIsGood.setEditable(false);
-		txtTextfieldIsGood.setText("textField is Good, But I Don't Like Design");
+		try {
+			if(serverOpen) txtTextfieldIsGood.setText("IP: " + InetAddress.getLocalHost().getHostAddress() + " | Port: " + openServer.port);
+			else txtTextfieldIsGood.setText("IP: " + connectServer.ip + " | Port: " + connectServer.port);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 		GridBagConstraints gbc_txtTextfieldIsGood = new GridBagConstraints();
 		gbc_txtTextfieldIsGood.fill = GridBagConstraints.BOTH;
 		gbc_txtTextfieldIsGood.gridwidth = 3;
@@ -463,21 +468,21 @@ public class MyTetris extends JFrame {
 		lobbyContentPane.add(txtTextfieldIsGood, gbc_txtTextfieldIsGood);
 		txtTextfieldIsGood.setColumns(10);
 		
-		lobbyServerLabel = new JLabel("서버 라벨");
+		lobbyServerLabel = new JLabel("서버");
 		GridBagConstraints gbc_lobbyServerLabel = new GridBagConstraints();
 		gbc_lobbyServerLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lobbyServerLabel.gridx = 1;
 		gbc_lobbyServerLabel.gridy = 1;
 		lobbyContentPane.add(lobbyServerLabel, gbc_lobbyServerLabel);
 		
-		JLabel lobbyClientLabel = new JLabel("클라이언트 라벨");
+		JLabel lobbyClientLabel = new JLabel("클라이언트");
 		GridBagConstraints gbc_lobbyClientLabel = new GridBagConstraints();
 		gbc_lobbyClientLabel.insets = new Insets(0, 0, 5, 0);
 		gbc_lobbyClientLabel.gridx = 2;
 		gbc_lobbyClientLabel.gridy = 1;
 		lobbyContentPane.add(lobbyClientLabel, gbc_lobbyClientLabel);
 		
-		lobbyConnectLabel = new JLabel("접속 라벨");
+		lobbyConnectLabel = new JLabel("접속?");
 		GridBagConstraints gbc_lobbyConnectLabel = new GridBagConstraints();
 		gbc_lobbyConnectLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lobbyConnectLabel.gridx = 0;
@@ -500,7 +505,7 @@ public class MyTetris extends JFrame {
 		gbc_lobbyClientConnectCheckBox.gridy = 2;
 		lobbyContentPane.add(lobbyClientConnectCheckBox, gbc_lobbyClientConnectCheckBox);
 		
-		lobbyReadyLabel = new JLabel("준비 라벨");
+		lobbyReadyLabel = new JLabel("준비?");
 		GridBagConstraints gbc_lobbyReadyLabel = new GridBagConstraints();
 		gbc_lobbyReadyLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lobbyReadyLabel.gridx = 0;
@@ -557,12 +562,12 @@ public class MyTetris extends JFrame {
 		gbc_lobbyItemCheckBox.gridy = 5;
 		lobbyContentPane.add(lobbyItemCheckBox, gbc_lobbyItemCheckBox);
 		
-		lobbyMiriCheckBox = new JCheckBox("미리 보기");
-		lobbyMiriCheckBox.setEnabled(false);
-		GridBagConstraints gbc_lobbyMiriCheckBox = new GridBagConstraints();
-		gbc_lobbyMiriCheckBox.gridx = 2;
-		gbc_lobbyMiriCheckBox.gridy = 5;
-		lobbyContentPane.add(lobbyMiriCheckBox, gbc_lobbyMiriCheckBox);
+//		lobbyMiriCheckBox = new JCheckBox("미리 보기");
+//		lobbyMiriCheckBox.setEnabled(false);
+//		GridBagConstraints gbc_lobbyMiriCheckBox = new GridBagConstraints();
+//		gbc_lobbyMiriCheckBox.gridx = 2;
+//		gbc_lobbyMiriCheckBox.gridy = 5;
+//		lobbyContentPane.add(lobbyMiriCheckBox, gbc_lobbyMiriCheckBox);
 		
 		
 		lobbyServerConnectCheckBox.setSelected(serverOpen);
@@ -570,7 +575,6 @@ public class MyTetris extends JFrame {
 		lobbyAttackCheckBox.setEnabled(serverOpen);
 		lobbyItemCheckBox.setEnabled(serverOpen);
 	}
-	
 	
 	/*
 	 
@@ -608,42 +612,40 @@ public class MyTetris extends JFrame {
 		
 		public void run() {
 			try {
+				System.out.println("헉runserver");
+				
+				client = socket.accept();
+				MyTetris.getUConnectCheckBox().setSelected(true);
+				
+				in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
+	
+				String outStr;
+	
 				while(true) {
-					System.out.println("헉runserver");
-					
-					client = socket.accept();
-					MyTetris.getUConnectCheckBox().setSelected(true);
-					
-					in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-					out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
-		
-					String outStr;
-		
-					while(true) {
-						outStr = (MyTetris.getReadyCheckBox().isSelected() ? 1 : 0) + "p" +
-								 (MyTetris.getAttackCheckBox().isSelected() ? 1 : 0) + "p" +
-								 (MyTetris.getItemCheckBox().isSelected() ? 1 : 0);
-						out.println(outStr);
-						out.flush();
-			
-						if(in.read() == 1) MyTetris.getUReadyCheckBox().setSelected(true);
-						else MyTetris.getUReadyCheckBox().setSelected(false);
-			
-						if((MyTetris.getReadyCheckBox().isSelected() ? true : false) && (MyTetris.getUReadyCheckBox().isSelected() ? true : false)) break;
-					}
-					
-					renderUIMulti();
-					tetrisCanvas.start();
-					
-					outStr = "1p" + (MyTetris.getAttackCheckBox().isSelected() ? 1 : 0) + "p" + (MyTetris.getItemCheckBox().isSelected() ? 1 : 0);
+					outStr = (MyTetris.getReadyCheckBox().isSelected() ? 1 : 0) + "p" +
+							 (MyTetris.getAttackCheckBox().isSelected() ? 1 : 0) + "p" +
+							 (MyTetris.getItemCheckBox().isSelected() ? 1 : 0);
 					out.println(outStr);
-					System.out.println(in.read());
-					
-					MyTetris.tetrisCanvas.data.setAttack(MyTetris.getAttackCheckBox().isSelected());
-					MyTetris.tetrisCanvas.useItem = MyTetris.getItemCheckBox().isSelected();
-					
-					try {function.handlerRun(in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
+					out.flush();
+		
+					if(in.read() == 1) MyTetris.getUReadyCheckBox().setSelected(true);
+					else MyTetris.getUReadyCheckBox().setSelected(false);
+		
+					if((MyTetris.getReadyCheckBox().isSelected() ? true : false) && (MyTetris.getUReadyCheckBox().isSelected() ? true : false)) break;
 				}
+				
+				renderUIMulti();
+				tetrisCanvas.start();
+				
+				outStr = "1p" + (MyTetris.getAttackCheckBox().isSelected() ? 1 : 0) + "p" + (MyTetris.getItemCheckBox().isSelected() ? 1 : 0);
+				out.println(outStr);
+				System.out.println(in.read());
+				
+				MyTetris.tetrisCanvas.data.setAttack(MyTetris.getAttackCheckBox().isSelected());
+				MyTetris.tetrisCanvas.useItem = MyTetris.getItemCheckBox().isSelected();
+				
+				try {function.handlerRun(in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(null, e);
 				MyTetris.getUConnectCheckBox().setSelected(false);
