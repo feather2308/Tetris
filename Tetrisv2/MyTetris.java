@@ -156,13 +156,14 @@ public class MyTetris extends JFrame {
 		GridBagConstraints gbc_baseTetrisText = new GridBagConstraints();
 		gbc_baseTetrisText.gridwidth = 3;
 		
-		gbl_baseContentPane.columnWidths = new int[] {30, 70, 40, 70, 30};
-		gbl_baseContentPane.rowHeights = new int[] {30, 0, 30, 0, 0, 0, 0, 30};
-		gbl_baseContentPane.columnWeights = new double[]{0.0, 0.0, 0.0};
+		gbl_baseContentPane.columnWidths = new int[] {30, 60, 0, 60, 30};
+		gbl_baseContentPane.rowHeights = new int[] {30, 0, 30, 30, 30, 30, 30, 30};
+		gbl_baseContentPane.columnWeights = new double[]{0.0, 0.0, 1.0};
 		gbl_baseContentPane.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		baseContentPane.setLayout(gbl_baseContentPane);
 	
 		JTextField baseTetrisText = new JTextField();
+		baseTetrisText.setEditable(false);
 		baseTetrisText.setHorizontalAlignment(SwingConstants.CENTER);
 		baseTetrisText.setText("TETRIS");
 
@@ -244,9 +245,9 @@ public class MyTetris extends JFrame {
 		GridBagConstraints gbc_baseServerSinglePlayButton = new GridBagConstraints();
 		GridBagConstraints gbc_baseServerMultiPlayButton = new GridBagConstraints();
 		
-		gbl_baseServerContentPane.columnWidths = new int[] {30, 70, 40, 70, 30};
-		gbl_baseServerContentPane.rowHeights = new int[] {30, 0, 30, 0, 0, 30, 0, 30};
-		gbl_baseServerContentPane.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0};
+		gbl_baseServerContentPane.columnWidths = new int[] {30, 60, 0, 60, 30};
+		gbl_baseServerContentPane.rowHeights = new int[] {30, 0, 30, 30, 30, 30, 30, 30};
+		gbl_baseServerContentPane.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0};
 		gbl_baseServerContentPane.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		baseMultiContentPane.setLayout(gbl_baseServerContentPane);
 		
@@ -277,6 +278,7 @@ public class MyTetris extends JFrame {
 		gbc_baseServerTetrisText.gridwidth = 3;
 		
 			JTextField baseServerTetrisText = new JTextField();
+			baseServerTetrisText.setEditable(false);
 			baseServerTetrisText.setHorizontalAlignment(SwingConstants.CENTER);
 			baseServerTetrisText.setText("TETRIS");
 			
@@ -300,7 +302,7 @@ public class MyTetris extends JFrame {
 				});
 				
 						gbc_baseServerBackButton.fill = GridBagConstraints.BOTH;
-						gbc_baseServerBackButton.insets = new Insets(0, 0, 0, 5);
+						gbc_baseServerBackButton.insets = new Insets(0, 0, 5, 5);
 						gbc_baseServerBackButton.gridx = 2;
 						gbc_baseServerBackButton.gridy = 6;
 						baseMultiContentPane.add(baseServerBackButton, gbc_baseServerBackButton);
@@ -831,7 +833,8 @@ public class MyTetris extends JFrame {
 					+ 0 + "p"
 					+ 0 + "p"
 					+ 8 + "p"
-					+ -1;
+					+ -1 + "p"
+					+ 0;
 			
 			out.println(outStr);
 			out.flush();
