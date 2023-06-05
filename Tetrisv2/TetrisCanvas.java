@@ -156,7 +156,10 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					current = next;
 					miri = current.deepCopy();
 					gameCheck(false);
-					if(itemBizarrePieceCount > tmpIBPC) itemBizarrePiece();
+					if(itemBizarrePieceCount > tmpIBPC) {
+						itemBizarrePiece();
+						tmpIBPC = itemBizarrePieceCount;
+					}
 					else pieceMake();
 					makeNew = false;
 					lineTmp = data.getLine();
@@ -269,6 +272,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					if(data.getScore()>=15000) {
 						itemBizarrePieceCounter++;
 						data.setScore(-15000);
+						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
 					}
 				}
 				break;
