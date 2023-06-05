@@ -18,6 +18,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected int interval = 2000;
 	protected int level = TetrisData.BASE_SPEED;
 	protected int lineTmp, aLine = 0;
+	protected boolean useItem = true;
 	
 	public TetrisCanvas() {
 		data = new TetrisData();
@@ -237,17 +238,28 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				}
 				break;
 			case 65:	//'a' 키
-				if(data.getScore()>=5000) {
-					data.itemRemoveLine();
-					data.setScore(-5000);
-					MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
-					repaint();
+				if(useItem) {
+					if(data.getScore()>=5000) {
+						data.itemRemoveLine();
+						data.setScore(-5000);
+						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+						repaint();
+					}
 				}
-				
-			case 85:	//'s' 키
+				break;
+			case 83:	//'s' 키
+				if(useItem) {
+					if(data.getScore()>=1000) {
+						itemChangePiece();
+						data.setScore(-1000);
+						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
+						repaint();
+					}
+				}
+				break;
 		}
 	}
-	
+
 	public void keyReleased(KeyEvent e) { }
 	public void keyTyped(KeyEvent e) { }
 	
@@ -283,6 +295,37 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
                 pieceMake();
                 break;
         }
+	}
+	
+	private void itemChangePiece() {
+		int random = (int)(Math.random() * Integer.MAX_VALUE) % 7;
+		if(temp == random) random = (int)(Math.random() * Integer.MAX_VALUE) % 7;
+		switch(random) {
+	        case 0:
+	            current = new Bar(data);
+	            break;
+	        case 1:
+	        	current = new Tee(data);
+	            break;
+	        case 2:
+	        	current = new El(data);
+	            break;
+	        case 3:
+	        	current = new Square(data);
+	            break;
+	        case 4:
+	        	current = new Er(data);
+	            break;
+	        case 5:
+	        	current = new Kl(data);
+	            break;
+	        case 6:
+	        	current = new Kr(data);
+	            break;
+	        default:
+	            itemChangePiece();
+	            break;
+	    }
 	}
 	
 	public void rotateSavePiece(Piece save) {

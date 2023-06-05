@@ -640,6 +640,7 @@ public class MyTetris extends JFrame {
 					System.out.println(in.read());
 					
 					MyTetris.tetrisCanvas.data.setAttack(MyTetris.getAttackCheckBox().isSelected());
+					MyTetris.tetrisCanvas.useItem = MyTetris.getItemCheckBox().isSelected();
 					
 					try {function.handlerRun(in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
 				}
@@ -706,6 +707,7 @@ public class MyTetris extends JFrame {
 				System.out.println(in.readLine());
 				
 				MyTetris.tetrisCanvas.data.setAttack(Integer.parseInt(inStrFix[1]) == 1 ? true : false);
+				MyTetris.tetrisCanvas.useItem = MyTetris.getItemCheckBox().isSelected();
 				
 				try {function.handlerRun(in, out, enemyScore);} catch(Exception e) {System.out.println(e);}
 			} catch(Exception e) {
