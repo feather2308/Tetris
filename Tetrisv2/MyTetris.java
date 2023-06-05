@@ -808,7 +808,7 @@ public class MyTetris extends JFrame {
 					}
 					inCPr = function.convertStringToIntArray_1(inStrFix[3]);
 					inCPc = function.convertStringToIntArray_1(inStrFix[4]);
-					if(inCPr.length == 4 && inCPc.length == 4) {
+					if(inCPr.length > 2 && inCPc.length > 2) {
 						multiTetrisCanvas.current.r = inCPr;
 						multiTetrisCanvas.current.c = inCPc;
 						multiTetrisCanvas.current.center.x = Integer.parseInt(inStrFix[5]);
@@ -850,7 +850,7 @@ public class MyTetris extends JFrame {
 				}
 				inCPr = function.convertStringToIntArray_1(inStrFix[3]);
 				inCPc = function.convertStringToIntArray_1(inStrFix[4]);
-				if(inCPr.length == 4 && inCPc.length == 4) {
+				if(inCPr.length > 2 && inCPc.length > 2) {
 					multiTetrisCanvas.current.r = inCPr;
 					multiTetrisCanvas.current.c = inCPc;
 					multiTetrisCanvas.current.center.x = Integer.parseInt(inStrFix[5]);
@@ -907,9 +907,9 @@ public class MyTetris extends JFrame {
 	    
 	    public static int[] convertStringToIntArray_1(String str) {
 	    	String[] num = str.trim().split("s");
-	    	int[] array = new int[4];
+	    	int[] array = new int[num.length];
 	    	
-	    	for(int i = 0; i < 4; i++) {
+	    	for(int i = 0; i < num.length; i++) {
 	    		array[i] = Integer.parseInt(num[i]);
 	    	}
 	    	return array;
