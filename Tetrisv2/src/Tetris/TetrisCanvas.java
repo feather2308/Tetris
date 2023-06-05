@@ -269,9 +269,9 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				break;
 			case 68:	//'d' 키
 				if(useItem) {
-					if(data.getScore()>=15) {
+					if(data.getScore()>=15000) {
 						itemBizarrePieceCounter++;
-						data.setScore(-15);
+						data.setScore(-15000);
 						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
 					}
 				}
