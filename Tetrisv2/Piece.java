@@ -42,13 +42,13 @@ public abstract class Piece implements Cloneable {
 		int y = getY();
 		
 		if(downsetting != true) {
-			for(int i = 0; i < 4; i++) {
+			for(int i = 0; i < this.r.length; i++) {
 				if(data.getAt(y + r[i], x + c[i]) != 0) return true;
 			}
 		} else {
 			if(getMinY() + y < 0) return true;
 			
-			for(int i = 0; i < 4; i++) {
+			for(int i = 0; i < this.r.length; i++) {
 				data.setAt(y + r[i], x + c[i], getType());
 			}
 		}
@@ -203,7 +203,7 @@ public abstract class Piece implements Cloneable {
 	}
 	
 	public void rotate4() {
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < this.r.length; i++) {
 			int temp = c[i];
 			c[i] = -r[i];
 			r[i] = temp;
@@ -212,7 +212,7 @@ public abstract class Piece implements Cloneable {
 	
 	private boolean isOutOfBounds() {
 		int tmpR; int tmpC;
-	    for (int i = 0; i < 4; i++) {
+	    for (int i = 0; i < this.r.length; i++) {
 	        tmpR = getY() + r[i];
 	        tmpC = getX() + c[i];
 	        if(tmpR >= TetrisData.ROW || tmpC < 0 || tmpC >= TetrisData.COL) return true;
@@ -240,7 +240,7 @@ public abstract class Piece implements Cloneable {
 	
 	private int getMaxXOffset() {
 	    int maxOffset = 0;
-	    for (int i = 0; i < 4; i++) {
+	    for (int i = 0; i < this.r.length; i++) {
 	        int newCol = getX() + c[i];
 	        int offset = 0;
 	        if (newCol < 0) {
@@ -255,7 +255,7 @@ public abstract class Piece implements Cloneable {
 	
 	private int getMinXOffset() {
 	    int minOffset = 0;
-	    for (int i = 0; i < 4; i++) {
+	    for (int i = 0; i < this.r.length; i++) {
 	        int newCol = getX() + c[i];
 	        int offset = 0;
 	        if (newCol >= TetrisData.COL) {

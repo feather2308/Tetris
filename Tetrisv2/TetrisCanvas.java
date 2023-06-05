@@ -18,12 +18,14 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected int interval = 2000;
 	protected int level = TetrisData.BASE_SPEED;
 	protected int lineTmp, aLine = 0;
+	protected int itemBizarrePieceCount, tmpIBPC;
+	protected int itemBizarrePieceCounter;
 	protected boolean useItem = true;
 	
 	public TetrisCanvas() {
 		data = new TetrisData();
 		addKeyListener(this);
-		colors = new Color[10];
+		colors = new Color[11];
 		colors[0] = new Color(133, 133, 133);//미리보기색
 		colors[1] = new Color(255, 0, 0);	//빨간색
 		colors[2] = new Color(0, 255, 0);	//녹색
@@ -34,11 +36,15 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		colors[7] = new Color(40, 0, 240);	//파란색
 		colors[8] = new Color(238, 238, 238); //배경색
 		colors[9] = new Color(80, 80, 80);	//검은회색
+		colors[10] = new Color(200, 191, 231); //아이템블럭 색깔
 	}
 	
 	public void start() {
 		data.clear();
 		lineTmp = data.getLine();
+		itemBizarrePieceCount = 0;
+		itemBizarrePieceCounter = 0;
+		tmpIBPC = itemBizarrePieceCount;
 		pieceMake();
 		makeNew = true;
 		stop = false;
@@ -78,14 +84,14 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 		
 		if(miri != null) {
 			while(miri.moveDown() != true) { }
-			for(int i = 0; i < 4; i++) {
+			for(int i = 0; i < miri.r.length; i++) {
 				g.setColor(colors[0]);
 				g.fill3DRect(margin / 2 + w * (miri.getX() + miri.c[i]), margin/2 + w * (miri.getY() + miri.r[i]) + w, w, w, true);
 			}
 		}
 		
 		if(current != null) {
-			for(int i = 0; i < 4; i++) {
+			for(int i = 0; i < current.r.length; i++) {
 				g.setColor(colors[current.getType()]);
 				g.fill3DRect(margin / 2 + w * (current.getX() + current.c[i]), margin/2 + w * (current.getY() + current.r[i]) + w, w, w, true);
 			}
@@ -96,7 +102,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	    	int XPaint = getXPaint(next);
             int nextY = 5;
             int YPaint = getYPaint(next);
-	        for (int i = 0; i < 4; i++) {
+	        for (int i = 0; i < next.r.length; i++) {
 	            g.setColor(colors[next.getType()]);
 	            g.fill3DRect(XPaint + (w - 10) * (nextX + next.c[i]), YPaint + (w - 10) * (nextY + next.r[i]), w - 10, w - 10, true);
 	        }
@@ -107,7 +113,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	    	int XPaint = getXPaint(hold);
 	    	int holdY = 11;
             int YPaint = getYPaint(hold);
-	    	for(int i = 0; i < 4; i++) {
+	    	for(int i = 0; i < hold.r.length; i++) {
 	    		g.setColor(colors[hold.getType()]);
 	    		g.fill3DRect(XPaint + (w - 10) * (holdX + hold.c[i]), YPaint + (w - 10) * (holdY + hold.r[i]), w - 10, w - 10, true);
 	    	}
@@ -150,7 +156,8 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					current = next;
 					miri = current.deepCopy();
 					gameCheck(false);
-					pieceMake();
+					if(itemBizarrePieceCount > tmpIBPC) itemBizarrePiece();
+					else pieceMake();
 					makeNew = false;
 					lineTmp = data.getLine();
 				} else {
@@ -257,6 +264,14 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					}
 				}
 				break;
+			case 68:	//'d' 키
+				if(useItem) {
+					if(data.getScore()>=15000) {
+						itemBizarrePieceCounter++;
+						data.setScore(-15000);
+					}
+				}
+				break;
 		}
 	}
 
@@ -326,6 +341,29 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	            itemChangePiece();
 	            break;
 	    }
+	}
+	
+	private void itemBizarrePiece() {
+		int random = (int)(Math.random() * Integer.MAX_VALUE) % 4;
+		if(temp == random) random = (int)(Math.random() * Integer.MAX_VALUE) % 4;
+		temp = random;
+        switch(random) {
+            case 0:
+                next = new AE(data);
+                break;
+            case 1:
+                next = new CP(data);
+                break;
+            case 2:
+                next = new Dg(data);
+                break;
+            case 3:
+                next = new Ho(data);
+                break;
+            default:
+                pieceMake();
+                break;
+        }
 	}
 	
 	public void rotateSavePiece(Piece save) {

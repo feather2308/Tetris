@@ -569,7 +569,6 @@ public class MyTetris extends JFrame {
 //		gbc_lobbyMiriCheckBox.gridy = 5;
 //		lobbyContentPane.add(lobbyMiriCheckBox, gbc_lobbyMiriCheckBox);
 		
-		
 		lobbyServerConnectCheckBox.setSelected(serverOpen);
 		lobbyClientConnectCheckBox.setSelected(!serverOpen);
 		lobbyAttackCheckBox.setEnabled(serverOpen);
@@ -735,7 +734,7 @@ public class MyTetris extends JFrame {
 			//output 변수들
 			int[][] data;
 			int[] r, c;
-			int death, score = 0, x, y, CPType, outLine;
+			int death, score = 0, x, y, CPType, outLine, itemBPC;
 			
 			String outStr;
 			
@@ -769,6 +768,8 @@ public class MyTetris extends JFrame {
 					CPType = 8;
 				}
 				
+				itemBPC = tetrisCanvas.itemBizarrePieceCounter;
+				
 				outStr = death + "p"									//tetrisCanvas.stop					Boolean 자료형 -> convert int 자료형
 						+ score + "p"									//tetrisCanvas.data.getScore()		int 자료형
 						+ function.convertIntArrayToString(data) + "p"	//tetrisCanvas.data.getData()		int[][] 자료형 즉, data의 data임.
@@ -777,7 +778,8 @@ public class MyTetris extends JFrame {
 						+ x + "p"										//tetrisCanvas.current.center.x		int 자료형
 						+ y + "p"										//tetrisCanvas.current.center.y		int 자료형
 						+ CPType + "p"									//tetrisCanvas.current.getType()	int 자료형
-						+ outLine;										//tetrisCanvas.data.getLine()		int 자료형
+						+ outLine + "p"									//tetrisCanvas.data.getLine()		int 자료형
+						+ itemBPC;										//tetrisCanvas.itemBizarrePieceCounter int 자료형
 				
 				out.println(outStr);
 				out.flush();
@@ -791,11 +793,11 @@ public class MyTetris extends JFrame {
 				inStr = in.readLine();
 				
 				if(inStr != null) {
-					inStrFix = function.convertStringDiv(inStr); 	//inStrFix[0, 1, 2, 3, 4, 5, 6, 7, 8]
+					inStrFix = function.convertStringDiv(inStr); 	//inStrFix[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 																	//0 = 죽음			1 = 점수				2 = data.data 테이블임.
 																	//3 = 현재조각 r[]		4 = 현재조각 c[]
 																	//5 = 현재조각 센터 x	6 = 현재조각 센터 y		7 = 현재조각 타입
-																	//8 = 데이터 라인
+																	//8 = 데이터 라인		9 = 괴상한 조각 카운터
 					inDeath = Integer.parseInt(inStrFix[0]);
 					inData = function.convertStringToIntArray(inStrFix[2]);
 					if(inData.length == TetrisData.ROW && inData[0].length == TetrisData.COL) {
@@ -815,6 +817,7 @@ public class MyTetris extends JFrame {
 						tetrisCanvas.aLine += (Integer.parseInt(inStrFix[8]) / 4 - tempALine > 0 ? Integer.parseInt(inStrFix[8]) / 4 - tempALine : 0);
 						tempALine = Integer.parseInt(inStrFix[8]) / 4;
 					}
+					tetrisCanvas.itemBizarrePieceCount = Integer.parseInt(inStrFix[9]);
 				}
 
 				if(inDeath == 1 && tetrisCanvas.stop) break;
