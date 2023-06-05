@@ -49,6 +49,7 @@ public class TetrisData
 	}
 	
 	public synchronized void removeLiness() {
+		int chain = 0;
 		NEXT:
 			for(int i = ROW - 1; i >= 0; i--) {
 				boolean done = true;
@@ -60,7 +61,7 @@ public class TetrisData
 				}
 				if(done) {
 					line++;
-					score += 175 * MyTetris.getTetrisCanvas().level;
+					chain++;
 					for(int x = i; x > 0; x--) {
 						for(int y = 0; y < COL; y++) {
 							data[x][y] = data[x-1][y];
@@ -74,6 +75,25 @@ public class TetrisData
 					i++;
 				}
 			}
+		switch(chain) {
+			case 1:
+				score += 175 * MyTetris.getTetrisCanvas().level * chain;
+				break;
+			case 2:
+				score += 175 * MyTetris.getTetrisCanvas().level * chain * 1.2;
+				break;
+			case 3:
+				score += 175 * MyTetris.getTetrisCanvas().level * chain * 1.5;
+				break;
+			case 4:
+				score += 175 * MyTetris.getTetrisCanvas().level * chain * 2;
+				break;
+			case 5:
+				score += 175 * MyTetris.getTetrisCanvas().level * chain * 5;
+			case 0:
+			default:
+				break;
+		}
 		MyTetris.getLblScoreLabel().setText("Score: " + score);
 		MyTetris.getLblLineLabel().setText("Line: " + line);
 		if(MyTetris.getTetrisCanvas().lineTmp != line) {

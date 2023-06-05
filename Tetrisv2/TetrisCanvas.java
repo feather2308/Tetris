@@ -206,7 +206,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				repaint();
 				break;
 			case 32:	//스페이스바
-				while(!current.moveDown()) { }
+				while(!current.moveDown()) data.setScore(10);
 				makeNew = true;
 				gameCheck(true);
 				current = null;
