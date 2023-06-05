@@ -808,7 +808,7 @@ public class MyTetris extends JFrame {
 					}
 					inCPr = function.convertStringToIntArray_1(inStrFix[3]);
 					inCPc = function.convertStringToIntArray_1(inStrFix[4]);
-					if(inCPr.length > 2 && inCPc.length > 2) {
+					if(inCPr.length > 1 && inCPc.length > 1) {
 						multiTetrisCanvas.current.r = inCPr;
 						multiTetrisCanvas.current.c = inCPc;
 						multiTetrisCanvas.current.center.x = Integer.parseInt(inStrFix[5]);
@@ -848,15 +848,7 @@ public class MyTetris extends JFrame {
 					multiTetrisCanvas.data.setData(function.convertStringToIntArray(inStrFix[2]));
 					multiTetrisCanvas.repaint();
 				}
-				inCPr = function.convertStringToIntArray_1(inStrFix[3]);
-				inCPc = function.convertStringToIntArray_1(inStrFix[4]);
-				if(inCPr.length > 2 && inCPc.length > 2) {
-					multiTetrisCanvas.current.r = inCPr;
-					multiTetrisCanvas.current.c = inCPc;
-					multiTetrisCanvas.current.center.x = Integer.parseInt(inStrFix[5]);
-					multiTetrisCanvas.current.center.y = Integer.parseInt(inStrFix[6]);
-					multiTetrisCanvas.current.setType(Integer.parseInt(inStrFix[7]));
-				}
+				multiTetrisCanvas.current = null;
 			}
 			
 			enemyScore.getMeLabel().setText("Me");

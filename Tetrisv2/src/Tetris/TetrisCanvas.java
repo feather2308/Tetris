@@ -19,7 +19,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 	protected int level = TetrisData.BASE_SPEED;
 	protected int lineTmp, aLine = 0;
 	protected int itemBizarrePieceCount, tmpIBPC;
-	protected int itemBizarrePieceCounter;
+	protected int itemBizarrePieceCounter = 0;
 	protected boolean useItem = true;
 	
 	public TetrisCanvas() {
@@ -158,7 +158,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 					gameCheck(false);
 					if(itemBizarrePieceCount > tmpIBPC) {
 						itemBizarrePiece();
-						tmpIBPC = itemBizarrePieceCount;
+						tmpIBPC++;
 					}
 					else pieceMake();
 					makeNew = false;
@@ -269,9 +269,9 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				break;
 			case 68:	//'d' 키
 				if(useItem) {
-					if(data.getScore()>=15000) {
+					if(data.getScore()>=15) {
 						itemBizarrePieceCounter++;
-						data.setScore(-15000);
+						data.setScore(-15);
 						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
 					}
 				}
