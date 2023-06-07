@@ -261,6 +261,7 @@ public class TetrisCanvas extends JPanel implements Runnable, KeyListener {
 				if(useItem) {
 					if(data.getScore()>=1000) {
 						itemChangePiece();
+						miri = current.deepCopy();
 						data.setScore(-1000);
 						MyTetris.getLblScoreLabel().setText("Score: " + data.getScore());
 						repaint();
