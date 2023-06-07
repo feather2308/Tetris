@@ -62,6 +62,7 @@ public class MyTetris extends JFrame {
 	private final EnemyScore enemyScore = new EnemyScore();
 	private static final LeaderBoard leaderBoard = new LeaderBoard();
 	private static final GameOver gameOver = new GameOver();
+	private final keyHelp keyHelp = new keyHelp();
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -173,36 +174,6 @@ public class MyTetris extends JFrame {
 		gbc_baseTetrisText.gridy = 1;
 		baseContentPane.add(baseTetrisText, gbc_baseTetrisText);
 		baseTetrisText.setColumns(10);
-		GridBagConstraints gbc_baseSinglePlayButton = new GridBagConstraints();
-		
-		JButton baseSinglePlayButton = new JButton("혼자 놀기");
-		baseSinglePlayButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				renderUISingle();
-			}
-		});
-		
-		gbc_baseSinglePlayButton.fill = GridBagConstraints.BOTH;
-		gbc_baseSinglePlayButton.insets = new Insets(0, 0, 5, 5);
-		gbc_baseSinglePlayButton.gridx = 2;
-		gbc_baseSinglePlayButton.gridy = 3;
-		
-		baseContentPane.add(baseSinglePlayButton, gbc_baseSinglePlayButton);
-		GridBagConstraints gbc_baseMultiPlayButton = new GridBagConstraints();
-		
-				JButton baseMultiPlayButton = new JButton("같이 놀기");
-				baseMultiPlayButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-	            baseCardLayout.show(baseCardContentPane, "Server");
-						setTitle("테트리스 같이 놀기");
-					}
-				});
-				
-						gbc_baseMultiPlayButton.fill = GridBagConstraints.BOTH;
-						gbc_baseMultiPlayButton.insets = new Insets(0, 0, 5, 5);
-						gbc_baseMultiPlayButton.gridx = 2;
-						gbc_baseMultiPlayButton.gridy = 4;
-						baseContentPane.add(baseMultiPlayButton, gbc_baseMultiPlayButton);
 		GridBagConstraints gbc_baseExitButton = new GridBagConstraints();
 		gbc_baseExitButton.insets = new Insets(0, 0, 5, 5);
 		
@@ -212,6 +183,21 @@ public class MyTetris extends JFrame {
 						System.exit(0);
 					}
 				});
+						GridBagConstraints gbc_baseMultiPlayButton = new GridBagConstraints();
+						
+								JButton baseMultiPlayButton = new JButton("게임하기");
+								baseMultiPlayButton.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+	            baseCardLayout.show(baseCardContentPane, "Server");
+										setTitle("테트리스 게임하기");
+									}
+								});
+								
+										gbc_baseMultiPlayButton.fill = GridBagConstraints.BOTH;
+										gbc_baseMultiPlayButton.insets = new Insets(0, 0, 5, 5);
+										gbc_baseMultiPlayButton.gridx = 2;
+										gbc_baseMultiPlayButton.gridy = 3;
+										baseContentPane.add(baseMultiPlayButton, gbc_baseMultiPlayButton);
 						
 						JButton baseLeaderBoardButton = new JButton("점수판 보기");
 						baseLeaderBoardButton.addActionListener(new ActionListener() {
@@ -223,8 +209,21 @@ public class MyTetris extends JFrame {
 						gbc_baseLeaderBoardButton.fill = GridBagConstraints.HORIZONTAL;
 						gbc_baseLeaderBoardButton.insets = new Insets(0, 0, 5, 5);
 						gbc_baseLeaderBoardButton.gridx = 2;
-						gbc_baseLeaderBoardButton.gridy = 5;
+						gbc_baseLeaderBoardButton.gridy = 4;
 						baseContentPane.add(baseLeaderBoardButton, gbc_baseLeaderBoardButton);
+						
+						JButton baseKeyHelpButton = new JButton("도움말");
+						baseKeyHelpButton.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								keyHelp.setVisible(true);
+							}
+						});
+						GridBagConstraints gbc_baseKeyHelpButton = new GridBagConstraints();
+						gbc_baseKeyHelpButton.fill = GridBagConstraints.HORIZONTAL;
+						gbc_baseKeyHelpButton.insets = new Insets(0, 0, 5, 5);
+						gbc_baseKeyHelpButton.gridx = 2;
+						gbc_baseKeyHelpButton.gridy = 5;
+						baseContentPane.add(baseKeyHelpButton, gbc_baseKeyHelpButton);
 				
 						gbc_baseExitButton.fill = GridBagConstraints.BOTH;
 						gbc_baseExitButton.gridx = 2;
@@ -242,38 +241,12 @@ public class MyTetris extends JFrame {
 		baseCardContentPane.add(baseMultiContentPane, "Server");
 		
 		GridBagLayout gbl_baseServerContentPane = new GridBagLayout();
-		GridBagConstraints gbc_baseServerSinglePlayButton = new GridBagConstraints();
-		GridBagConstraints gbc_baseServerMultiPlayButton = new GridBagConstraints();
 		
 		gbl_baseServerContentPane.columnWidths = new int[] {30, 60, 0, 60, 30};
 		gbl_baseServerContentPane.rowHeights = new int[] {30, 0, 30, 30, 30, 30, 30, 30};
 		gbl_baseServerContentPane.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, 0.0};
 		gbl_baseServerContentPane.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 		baseMultiContentPane.setLayout(gbl_baseServerContentPane);
-		
-		JButton baseServerSinglePlayButton = new JButton("서버 열기");
-		baseServerSinglePlayButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				openServer.setVisible(true);
-			}
-		});
-
-		JButton baseServerMultiPlayButton = new JButton("서버 접속하기");
-		baseServerMultiPlayButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				connectServer.setVisible(true);
-			}
-		});
-		
-		gbc_baseServerSinglePlayButton.fill = GridBagConstraints.BOTH;
-		gbc_baseServerSinglePlayButton.insets = new Insets(0, 0, 5, 5);
-		gbc_baseServerSinglePlayButton.gridx = 2;
-		gbc_baseServerSinglePlayButton.gridy = 3;
-
-		gbc_baseServerMultiPlayButton.fill = GridBagConstraints.BOTH;
-		gbc_baseServerMultiPlayButton.insets = new Insets(0, 0, 5, 5);
-		gbc_baseServerMultiPlayButton.gridx = 2;
-		gbc_baseServerMultiPlayButton.gridy = 4;
 		GridBagConstraints gbc_baseServerTetrisText = new GridBagConstraints();
 		gbc_baseServerTetrisText.gridwidth = 3;
 		
@@ -288,9 +261,6 @@ public class MyTetris extends JFrame {
 					gbc_baseServerTetrisText.gridy = 1;
 					baseMultiContentPane.add(baseServerTetrisText, gbc_baseServerTetrisText);
 					baseServerTetrisText.setColumns(10);
-		
-		baseMultiContentPane.add(baseServerSinglePlayButton, gbc_baseServerSinglePlayButton);
-		baseMultiContentPane.add(baseServerMultiPlayButton, gbc_baseServerMultiPlayButton);
 		GridBagConstraints gbc_baseServerBackButton = new GridBagConstraints();
 		
 				JButton baseServerBackButton = new JButton("뒤로가기");
@@ -300,6 +270,43 @@ public class MyTetris extends JFrame {
 						setTitle("테트리스");
 					}
 				});
+						GridBagConstraints gbc_baseServerMultiPlayButton = new GridBagConstraints();
+						
+								JButton baseServerMultiPlayButton = new JButton("서버 접속하기");
+								baseServerMultiPlayButton.addActionListener(new ActionListener() {
+									public void actionPerformed(ActionEvent e) {
+										connectServer.setVisible(true);
+									}
+								});
+										GridBagConstraints gbc_baseServerSinglePlayButton = new GridBagConstraints();
+										
+										JButton baseServerSinglePlayButton = new JButton("서버 열기");
+										baseServerSinglePlayButton.addActionListener(new ActionListener() {
+											public void actionPerformed(ActionEvent e) {
+												openServer.setVisible(true);
+											}
+										});
+										
+										JButton baseSinglePlayButton = new JButton("혼자 놀기");
+										GridBagConstraints gbc_baseSinglePlayButton = new GridBagConstraints();
+										gbc_baseSinglePlayButton.fill = GridBagConstraints.BOTH;
+										gbc_baseSinglePlayButton.insets = new Insets(0, 0, 5, 5);
+										gbc_baseSinglePlayButton.gridx = 2;
+										gbc_baseSinglePlayButton.gridy = 3;
+										baseMultiContentPane.add(baseSinglePlayButton, gbc_baseSinglePlayButton);
+										
+										gbc_baseServerSinglePlayButton.fill = GridBagConstraints.BOTH;
+										gbc_baseServerSinglePlayButton.insets = new Insets(0, 0, 5, 5);
+										gbc_baseServerSinglePlayButton.gridx = 2;
+										gbc_baseServerSinglePlayButton.gridy = 4;
+										
+										baseMultiContentPane.add(baseServerSinglePlayButton, gbc_baseServerSinglePlayButton);
+								
+										gbc_baseServerMultiPlayButton.fill = GridBagConstraints.BOTH;
+										gbc_baseServerMultiPlayButton.insets = new Insets(0, 0, 5, 5);
+										gbc_baseServerMultiPlayButton.gridx = 2;
+										gbc_baseServerMultiPlayButton.gridy = 5;
+										baseMultiContentPane.add(baseServerMultiPlayButton, gbc_baseServerMultiPlayButton);
 				
 						gbc_baseServerBackButton.fill = GridBagConstraints.BOTH;
 						gbc_baseServerBackButton.insets = new Insets(0, 0, 5, 5);
@@ -311,72 +318,6 @@ public class MyTetris extends JFrame {
 	private void renderUIBaseServerTab() {
 		CardLayout baseCardLayout =	(CardLayout)this.getContentPane().getLayout();
 		baseCardLayout.show(this.getContentPane(), "Server");
-	}
-	
-	private void renderUISingle() {
-		this.getContentPane().removeAll();
-		
-		setTitle("테트리스 혼자 놀기");
-		setBounds(getBounds().x, getBounds().y, 380, 620);
-		
-		JPanel singleContentPane = new JPanel();
-		singleContentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		
-		this.setContentPane(singleContentPane);
-		this.revalidate();	
-		singleContentPane.setLayout(new BorderLayout(0, 0));
-		
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-		
-		JMenu gameMenu = new JMenu("게임");
-		menuBar.add(gameMenu);
-		
-		mntmStartMenuItem = new JMenuItem("시작");
-		mntmStartMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				tetrisCanvas.start();
-				mntmStartMenuItem.setEnabled(false);
-			}
-		});
-		gameMenu.add(mntmStartMenuItem);
-		
-		JMenuItem mntmExitMenuItem = new JMenuItem("종료");
-		mntmExitMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		gameMenu.add(mntmExitMenuItem);
-		
-		tetrisCanvas = new TetrisCanvas();
-		singleContentPane.add(tetrisCanvas, BorderLayout.CENTER);
-		tetrisCanvas.setLayout(null);
-		
-		nextPieceLabel = new JLabel("-NEXT-");
-		nextPieceLabel.setBounds(285, 40, 45, 15);
-		nextPieceLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		tetrisCanvas.add(nextPieceLabel);
-		
-		holdPieceLabel = new JLabel("-HOLD-");
-		holdPieceLabel.setBounds(285, 130, 44, 15);
-		holdPieceLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		tetrisCanvas.add(holdPieceLabel);
-		
-		lblScoreLabel = new JLabel("Score");
-		lblScoreLabel.setBounds(270, 475, 95, 15);
-		lblScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		tetrisCanvas.add(lblScoreLabel);
-		
-		lblLineLabel = new JLabel("Line");
-		lblLineLabel.setBounds(270, 495, 60, 15);
-		lblLineLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		tetrisCanvas.add(lblLineLabel);
-		
-		lblLevelLabel = new JLabel("Level");
-		lblLevelLabel.setBounds(270, 515, 60, 15);
-		lblLevelLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		tetrisCanvas.add(lblLevelLabel);
 	}
 	
 	
