@@ -288,6 +288,11 @@ public class MyTetris extends JFrame {
 										});
 										
 										JButton baseSinglePlayButton = new JButton("혼자 놀기");
+										baseSinglePlayButton.addActionListener(new ActionListener() {
+											public void actionPerformed(ActionEvent e) {
+												renderUISingle();
+											}
+										});
 										GridBagConstraints gbc_baseSinglePlayButton = new GridBagConstraints();
 										gbc_baseSinglePlayButton.fill = GridBagConstraints.BOTH;
 										gbc_baseSinglePlayButton.insets = new Insets(0, 0, 5, 5);
@@ -320,6 +325,71 @@ public class MyTetris extends JFrame {
 		baseCardLayout.show(this.getContentPane(), "Server");
 	}
 	
+	private void renderUISingle() {
+		this.getContentPane().removeAll();
+		
+		setTitle("테트리스 혼자 놀기");
+		setBounds(getBounds().x, getBounds().y, 380, 620);
+		
+		JPanel singleContentPane = new JPanel();
+		singleContentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
+		this.setContentPane(singleContentPane);
+		this.revalidate();	
+		singleContentPane.setLayout(new BorderLayout(0, 0));
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu gameMenu = new JMenu("게임");
+		menuBar.add(gameMenu);
+		
+		mntmStartMenuItem = new JMenuItem("시작");
+		mntmStartMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tetrisCanvas.start();
+				mntmStartMenuItem.setEnabled(false);
+			}
+		});
+		gameMenu.add(mntmStartMenuItem);
+		
+		JMenuItem mntmExitMenuItem = new JMenuItem("종료");
+		mntmExitMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		gameMenu.add(mntmExitMenuItem);
+		
+		tetrisCanvas = new TetrisCanvas();
+		singleContentPane.add(tetrisCanvas, BorderLayout.CENTER);
+		tetrisCanvas.setLayout(null);
+		
+		nextPieceLabel = new JLabel("-NEXT-");
+		nextPieceLabel.setBounds(285, 40, 45, 15);
+		nextPieceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		tetrisCanvas.add(nextPieceLabel);
+		
+		holdPieceLabel = new JLabel("-HOLD-");
+		holdPieceLabel.setBounds(285, 130, 44, 15);
+		holdPieceLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		tetrisCanvas.add(holdPieceLabel);
+		
+		lblScoreLabel = new JLabel("Score");
+		lblScoreLabel.setBounds(270, 475, 95, 15);
+		lblScoreLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		tetrisCanvas.add(lblScoreLabel);
+		
+		lblLineLabel = new JLabel("Line");
+		lblLineLabel.setBounds(270, 495, 60, 15);
+		lblLineLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		tetrisCanvas.add(lblLineLabel);
+		
+		lblLevelLabel = new JLabel("Level");
+		lblLevelLabel.setBounds(270, 515, 60, 15);
+		lblLevelLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		tetrisCanvas.add(lblLevelLabel);
+	}
 	
 	private void renderUIMulti() {
 		this.getContentPane().removeAll();
